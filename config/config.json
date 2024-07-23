@@ -2,8 +2,8 @@
     "URL" : "https://boletos.cloud.itau.com.br/boletos/v3/boletos",
     "URLFrancesa" : "https://boletos.cloud.itau.com.br/boletos/v3/francesas",
     "URLToken" : "https://sts.itau.com.br/api/oauth/token",
-    "ClientID" : "71ad69bb-6a85-4e93-8984-67a60520f82f",
-    "ClientSecret" : "e78b2c2e-aa30-4e78-ac65-1468b59dd379",
+    "ClientID" : "",
+    "ClientSecret" : "",
     "certFile" : "./DAY_ITAU.crt",
     "keyFile" : "./DAY_ITAU.key",
     "AgenciaConta": "805206903561"
