@@ -1,0 +1,16 @@
+{
+  "name": "itau",
+  "version": "1.0.0",
+  "description": "",
+  "main": "api_itau.js",
+  "scripts": {
+    "test": "node main.js"
+  },
+  "type": "module",
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "axios": "^1.7.2"
+  }
+}
