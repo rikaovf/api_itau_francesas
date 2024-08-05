@@ -76,7 +76,7 @@ export default class ApiItau {
                 return
             }
             //const dataMovimentacao = '2024-07-25'
-            const dataMovimentacao = data.length < 12 ? data.substring(0, 10) : data
+            const dataMovimentacao = data.length <= 12 ? data.substring(0, 10) : data
             
             const agent = new https.Agent({ 
                 cert: this.certFile, 
@@ -88,7 +88,7 @@ export default class ApiItau {
 
             // Configurações da requisição
             const axiosConfig = {
-                url: dataMovimentacao.length > 12 ? dataMovimentacao : this.URLFrancesa + "/" + this.agenciaConta + "/movimentacoes?data=" + dataMovimentacao + "&tipo_cobranca=boleto&tipo_movimentacao=entradas" + tipo_mov,
+                url: dataMovimentacao.length > 12 ? dataMovimentacao : this.URLFrancesa + "/" + this.agenciaConta + "/movimentacoes?data=" + dataMovimentacao + "&tipo_cobranca=boleto" + tipo_mov,
                 httpsAgent: agent, // Usar o agente HTTPS configurado com certificado e chave
                 headers: {
                     'Authorization': 'Bearer ' + this.accessToken,
