@@ -53,53 +53,75 @@ export default class ApiItau {
         axios(axiosConfig)
         .then(response => {
             this.accessToken = response.data.access_token;
-            
+
             this.consultaDataMovimentacao()        
         })
         .catch(error => {
             //console.log(error)
-            // escrever em arquivo um erro
+            fs.writeFile("..\respostaapiitau.json", JSON.stringify(error.response.data), function(erro) {
+                if(erro) {
+                    console.log(erro);
+                }            
+            });
         });
     }
 
     
     
     consultaDataMovimentacao(){
-        // pegar de um arquivo que o pce vai escrever e trazer para esta variavel
-        const dataMovimentacao = '2024-06-30'
         
-        // Configurar o agente HTTPS com certificado e chave
-        const agent = new https.Agent({ 
-            cert: this.certFile, 
-            key: this.keyFile, 
-            rejectUnauthorized: true // Define como `true` se o servidor requer autenticação
-        });
-        
-        // Configurações da requisição
-        const axiosConfig = {
-            url: this.URLFrancesa + "/" + this.agenciaConta + "/movimentacoes/?data=" + dataMovimentacao + "&tipo_cobranca=boleto",
-            httpsAgent: agent, // Usar o agente HTTPS configurado com certificado e chave
-            headers: {
-                'Authorization': 'Bearer ' + this.accessToken,
-                'x-itau-apikey': this.clientId,
-                'x-itau-correlationID': this.#gerarGuid(),
-                'x-itau-flowID': '1',
-                'Host': 'boletos.cloud.itau.com.br',
-                'Accept': '*/*',
-                'Accept-Encoding': 'gzip, deflate, br',
-                'Connection': 'keep-alive'            
-            },
-        };
-        
-        // Fazer a requisição usando Axios
-        axios(axiosConfig)
-        .then(response => {
-            //console.log(response.data)        
-            console.log(response.response.data)        
-        })
-        .catch(error => {
-            console.log(error.response.data)
-        });
+        fs.readFile('./dataconsultaitau.txt', 'utf8' , (err, data) => {
+            if (err) {
+                console.error(err)
+                return
+            }
+            //const dataMovimentacao = '2024-07-25'
+            const dataMovimentacao = data.length < 12 ? data.substring(0, 10) : data
+            
+            const agent = new https.Agent({ 
+                cert: this.certFile, 
+                key: this.keyFile, 
+                rejectUnauthorized: true // Define como `true` se o servidor requer autenticação
+            });
+            
+            const tipo_mov = data[10] == "E" ? "&tipo_movimentacao=entradas" : ""
+
+            // Configurações da requisição
+            const axiosConfig = {
+                url: dataMovimentacao.length > 12 ? dataMovimentacao : this.URLFrancesa + "/" + this.agenciaConta + "/movimentacoes?data=" + dataMovimentacao + "&tipo_cobranca=boleto&tipo_movimentacao=entradas" + tipo_mov,
+                httpsAgent: agent, // Usar o agente HTTPS configurado com certificado e chave
+                headers: {
+                    'Authorization': 'Bearer ' + this.accessToken,
+                    'x-itau-apikey': this.clientId,
+                    'x-itau-correlationID': this.#gerarGuid(),
+                    'x-itau-flowID': '1',
+                    'Host': 'boletos.cloud.itau.com.br',
+                    'Accept': '*/*',
+                    'Accept-Encoding': 'gzip, deflate, br',
+                    'Connection': 'keep-alive'            
+                },
+            };
+            
+            // Fazer a requisição usando Axios
+            axios(axiosConfig)
+            .then(response => {
+                console.log(response.data)        
+                fs.writeFile("respostaapiitau.json", JSON.stringify(response.data), function(erro) {
+                    if(erro) {
+                        console.log(erro);
+                    }            
+                });
+            })
+            .catch(error => {
+                console.log(error.response.data)
+                fs.writeFile("respostaapiitau.json", JSON.stringify(error.response.data), function(erro) {
+                    if(erro) {
+                        console.log(erro);
+                    }            
+                });
+            });
+        })        
+
     }
 
 
